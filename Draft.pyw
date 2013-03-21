@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-import sip
-sip.setapi('QString', 2)
+#import sip
+#sip.setapi('QString', 2)
 import sys, os
 from PyQt4 import QtCore, QtGui
 
@@ -418,7 +418,7 @@ class Draft(QtGui.QMainWindow):
         QtGui.QMessageBox.about(self, "About", 
                 "Draft"
                 "This program is published under the terms of the gpl license, it comes with ABSOLUTELY NO WARRANTY; for details, visit http://www.gnu.org/licenses/gpl.html"
-                "Designed by: Emilio Coppola ")
+                "\n\nBy: Emilio Coppola ")
 
     def mergeFormatOnWordOrSelection(self, format):
         cursor = self.textEdit.textCursor()
