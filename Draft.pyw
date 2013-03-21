@@ -4,7 +4,7 @@ sip.setapi('QString', 2)
 import sys, os
 from PyQt4 import QtCore, QtGui
 
-iconPath = os.path.join("data","icons")
+iconPath="non"
 
 class Draft(QtGui.QMainWindow):
     def __init__(self, fileName=None, parent=None):
@@ -15,23 +15,23 @@ class Draft(QtGui.QMainWindow):
         tb = QtGui.QToolBar("File Actions")
         self.addToolBar(tb)
 
-        self.actionNew = QtGui.QAction(QtGui.QIcon.fromTheme('document-new', QtGui.QIcon(iconPath + '/filenew.png')), 'New', self)
+        self.actionNew = QtGui.QAction(QtGui.QIcon.fromTheme('document-new'), 'New', self)
         self.actionNew.setShortcut('Ctrl+N')
         self.actionNew.triggered.connect(self.fileNew)
         
-        self.actionOpen = QtGui.QAction(QtGui.QIcon.fromTheme('document-open', QtGui.QIcon(iconPath + '/fileopen.png')), 'Open...', self)
+        self.actionOpen = QtGui.QAction(QtGui.QIcon.fromTheme('document-open'), 'Open...', self)
         self.actionOpen.setShortcut('Ctrl+O')
         self.actionOpen.triggered.connect(self.fileOpen)
         
-        self.actionSave = QtGui.QAction(QtGui.QIcon.fromTheme('document-save', QtGui.QIcon(iconPath + '/filesave.png')), 'Save', self, enabled=False)
+        self.actionSave = QtGui.QAction(QtGui.QIcon.fromTheme('document-save'), 'Save', self, enabled=False)
         self.actionSave.setShortcut('Ctrl+S')
         self.actionSave.triggered.connect(self.fileSave)
         
-        self.actionPrintPreview = QtGui.QAction(QtGui.QIcon.fromTheme('fileprint', QtGui.QIcon(iconPath + '/fileprint.png')), 'Preview...', self)
+        self.actionPrintPreview = QtGui.QAction(QtGui.QIcon.fromTheme('fileprint'), 'Preview...', self)
         self.actionPrintPreview.setShortcut('Ctrl+P')
         self.actionPrintPreview.triggered.connect(self.filePrintPreview)
         
-        self.actionSavePdf = QtGui.QAction(QtGui.QIcon.fromTheme('document-export', QtGui.QIcon(iconPath + '/exportpdf.png')), 'Export PDF...', self)
+        self.actionSavePdf = QtGui.QAction(QtGui.QIcon.fromTheme('document-export'), 'Export PDF...', self)
         self.actionSavePdf.setShortcut('Ctrl+D')
         self.actionSavePdf.triggered.connect(self.filePrint)
         
@@ -41,10 +41,7 @@ class Draft(QtGui.QMainWindow):
         tb.addAction(self.actionSave)
         tb.addAction(self.actionPrintPreview)
         tb.addAction(self.actionSavePdf)
-        
-        self.actionQuit = QtGui.QAction("&Quit", self, triggered=self.close)
                 
-        self.setupEditActions()
         self.setupTextActions()
         
         self.textEdit = QtGui.QTextEdit(self)
@@ -58,22 +55,8 @@ class Draft(QtGui.QMainWindow):
         self.alignmentChanged(self.textEdit.alignment())
         self.textEdit.document().modificationChanged.connect(self.actionSave.setEnabled)
         self.textEdit.document().modificationChanged.connect(self.setWindowModified)
-        self.textEdit.document().undoAvailable.connect(self.actionUndo.setEnabled)
-        self.textEdit.document().redoAvailable.connect(self.actionRedo.setEnabled)
         self.setWindowModified(self.textEdit.document().isModified())
         self.actionSave.setEnabled(self.textEdit.document().isModified())
-        self.actionUndo.setEnabled(self.textEdit.document().isUndoAvailable())
-        self.actionRedo.setEnabled(self.textEdit.document().isRedoAvailable())
-        self.actionUndo.triggered.connect(self.textEdit.undo)
-        self.actionRedo.triggered.connect(self.textEdit.redo)
-        self.actionCut.setEnabled(False)
-        self.actionCopy.setEnabled(False)
-        self.actionCut.triggered.connect(self.textEdit.cut)
-        self.actionCopy.triggered.connect(self.textEdit.copy)
-        self.actionPaste.triggered.connect(self.textEdit.paste)
-        self.textEdit.copyAvailable.connect(self.actionCut.setEnabled)
-        self.textEdit.copyAvailable.connect(self.actionCopy.setEnabled)
-        QtGui.QApplication.clipboard().dataChanged.connect(self.clipboardDataChanged)
 
         if fileName is None:
             fileName = os.path.join("example.html")
@@ -87,62 +70,26 @@ class Draft(QtGui.QMainWindow):
         else:
             e.ignore()
 
-
-    def setupEditActions(self):
-        tb = QtGui.QToolBar(self)
-        tb.setWindowTitle("Edit Actions")
-        self.addToolBar(tb)
-        tb.setMovable(False)
-        
-        self.actionUndo = QtGui.QAction(
-                QtGui.QIcon.fromTheme('edit-undo',
-                        QtGui.QIcon(iconPath + '/editundo.png')),
-                "&Undo", self, shortcut=QtGui.QKeySequence.Undo)
-        tb.addAction(self.actionUndo)
-
-        self.actionRedo = QtGui.QAction(
-                QtGui.QIcon.fromTheme('edit-redo',
-                        QtGui.QIcon(iconPath + '/editredo.png')),
-                "&Redo", self, priority=QtGui.QAction.LowPriority,
-                shortcut=QtGui.QKeySequence.Redo)
-        tb.addAction(self.actionRedo)
-
-        self.actionCut = QtGui.QAction(
-                QtGui.QIcon.fromTheme('edit-cut',
-                        QtGui.QIcon(iconPath + '/editcut.png')),
-                "Cu&t", self, priority=QtGui.QAction.LowPriority,
-                shortcut=QtGui.QKeySequence.Cut)
-        #tb.addAction(self.actionCut)
-
-        self.actionCopy = QtGui.QAction(
-                QtGui.QIcon.fromTheme('edit-copy',
-                        QtGui.QIcon(iconPath + '/editcopy.png')),
-                "&Copy", self, priority=QtGui.QAction.LowPriority,
-                shortcut=QtGui.QKeySequence.Copy)
-        #tb.addAction(self.actionCopy)
-
-        self.actionPaste = QtGui.QAction(
-                QtGui.QIcon.fromTheme('edit-paste',
-                        QtGui.QIcon(iconPath + '/editpaste.png')),
-                "&Paste", self, priority=QtGui.QAction.LowPriority,
-                shortcut=QtGui.QKeySequence.Paste,
-                enabled=(len(QtGui.QApplication.clipboard().text()) != 0))
-        #tb.addAction(self.actionPaste)
-
     def setupTextActions(self):
         tb = QtGui.QToolBar(self)
         tb.setWindowTitle("Format Actions")
         self.addToolBar(tb)
         tb.setMovable(False)
 
-        self.actionTextBold = QtGui.QAction(
+
+        self.actionTextBold = QtGui.QAction(QtGui.QIcon.fromTheme('format-text-bold'), 'Bold', self, checkable=True)
+        self.actionTextBold.setShortcut('Ctrl+B')
+        self.actionTextBold.triggered.connect(self.textBold) 
+        
+        """self.actionTextBold = QtGui.QAction(
                 QtGui.QIcon.fromTheme('format-text-bold',
                         QtGui.QIcon(iconPath + '/textbold.png')),
                 "&Bold", self, priority=QtGui.QAction.LowPriority,
                 shortcut=QtCore.Qt.CTRL + QtCore.Qt.Key_B,
-                triggered=self.textBold, checkable=True)
+                triggered=self.textBold, checkable=True)"""
         bold = QtGui.QFont()
         bold.setBold(True)
+        
         self.actionTextBold.setFont(bold)
         tb.addAction(self.actionTextBold)
 
@@ -180,7 +127,7 @@ class Draft(QtGui.QMainWindow):
         left_spacer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
 
 
-        self.actionMenu = QtGui.QAction(QtGui.QIcon.fromTheme('document-properties', QtGui.QIcon(iconPath + '/document-properties.png')), 'Menu', self)
+        self.actionMenu = QtGui.QAction(QtGui.QIcon.fromTheme('document-properties'), 'Menu', self)
         self.actionMenu.triggered.connect(self.on_mouse_menu)
         tbc.addWidget(left_spacer)
         tbc.addAction(self.actionMenu)
@@ -283,6 +230,7 @@ class Draft(QtGui.QMainWindow):
         # show context menu
         self.pos = QtGui.QCursor.pos()
         self.popMenuMouse.exec_(self.pos)   
+        
     def load(self, f):
         if not QtCore.QFile.exists(f):
             return False
@@ -466,9 +414,6 @@ class Draft(QtGui.QMainWindow):
     def cursorPositionChanged(self):
         self.alignmentChanged(self.textEdit.alignment())
 
-    def clipboardDataChanged(self):
-        self.actionPaste.setEnabled(len(QtGui.QApplication.clipboard().text()) != 0)
-
     def about(self):
         QtGui.QMessageBox.about(self, "About", 
                 "Draft"
@@ -512,7 +457,7 @@ if __name__ == '__main__':
     mainWindows = []
     for fn in sys.argv[1:] or [None]:
         textEdit = Draft(fn)
-        textEdit.resize(700, 400)
+        textEdit.resize(700, 450)
         textEdit.show()
         mainWindows.append(textEdit)
 
