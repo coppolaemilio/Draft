@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-#import sip
-#sip.setapi('QString', 2)
+# -*- coding: utf-8 -*-
+import sip
+sip.setapi('QString', 2)
 import sys, os
 from PyQt4 import QtCore, QtGui
 
-iconPath="non"
+iconPath="none"
 
 class Draft(QtGui.QMainWindow):
     def __init__(self, fileName=None, parent=None):
@@ -27,6 +28,10 @@ class Draft(QtGui.QMainWindow):
         self.actionSave.setShortcut('Ctrl+S')
         self.actionSave.triggered.connect(self.fileSave)
         
+        self.actionSaveAs = QtGui.QAction(QtGui.QIcon.fromTheme('document-save-as'), 'Save As...', self)
+        self.actionSaveAs.triggered.connect(self.fileSaveAs)
+        
+        
         self.actionPrintPreview = QtGui.QAction(QtGui.QIcon.fromTheme('fileprint'), 'Preview...', self)
         self.actionPrintPreview.setShortcut('Ctrl+P')
         self.actionPrintPreview.triggered.connect(self.filePrintPreview)
@@ -39,6 +44,7 @@ class Draft(QtGui.QMainWindow):
         tb.addAction(self.actionNew)
         tb.addAction(self.actionOpen)        
         tb.addAction(self.actionSave)
+        tb.addAction(self.actionSaveAs)
         tb.addAction(self.actionPrintPreview)
         tb.addAction(self.actionSavePdf)
                 
@@ -134,9 +140,8 @@ class Draft(QtGui.QMainWindow):
 
         # create context menu
         self.popMenuMouse = QtGui.QMenu(self)
-        self.popMenuMouse.addAction(QtGui.QAction('Create Document', self))    
-        self.popMenuMouse.addAction(QtGui.QAction('Close Document', self))  
-        self.popMenuMouse.addAction(QtGui.QAction('Fullscreen', self))  
+        self.popMenuMouse.addAction(QtGui.QAction('Create Document', self, triggered=self.fileNew))    
+        self.popMenuMouse.addAction(QtGui.QAction('Close Document', self, triggered=self.close))  
         self.popMenuMouse.addSeparator()
         self.popMenuMouse.addAction(QtGui.QAction('Preferences', self))
         self.popMenuMouse.addSeparator()
@@ -291,7 +296,7 @@ class Draft(QtGui.QMainWindow):
 
     def fileOpen(self):
         fn = QtGui.QFileDialog.getOpenFileName(self, "Open File...", None,
-                "HTML-Files (*.htm *.html);;All Files (*)")
+                "Supported formats (*htm *.html *.txt);;HTML-Files (*.htm *.html);;All Files (*)")
 
         if fn:
             self.load(fn)
